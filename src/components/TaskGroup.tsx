@@ -1,20 +1,20 @@
-import React, { useState } from "react";
+import React, { useState } from 'react'
 
 export function TaskGroup() {
-  const [tasks, setTasks] = useState(["", "", "", "", ""]);
+  const [tasks, setTasks] = useState(['', '', '', '', ''])
 
   function updateTask(newValue: string, index: number) {
     const newTasks = tasks.map((item, i) => {
       if (index === i) {
-        return newValue;
+        return newValue
       } else {
-        return item;
+        return item
       }
-    });
+    })
     if (index === newTasks.length - 1 && newTasks[index]) {
-      newTasks.push("");
+      newTasks.push('')
     }
-    setTasks(newTasks);
+    setTasks(newTasks)
   }
 
   return (
@@ -31,5 +31,5 @@ export function TaskGroup() {
         </React.Fragment>
       ))}
     </div>
-  );
+  )
 }

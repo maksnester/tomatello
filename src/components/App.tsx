@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component } from 'react'
 import { TaskGroup } from './TaskGroup'
 
 class App extends Component {
@@ -7,8 +7,8 @@ class App extends Component {
       <div>
         <TaskGroup />
       </div>
-    );
+    )
   }
 }
 
-export default App;
+export default App
