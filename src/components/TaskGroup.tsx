@@ -1,20 +1,20 @@
-import React, { ChangeEvent, useState } from 'react'
+import React, { useState } from "react";
 
 export function TaskGroup() {
   const [tasks, setTasks] = useState(["", "", "", "", ""]);
 
-  function onChangeTask(index: number) {
-    return (event: ChangeEvent<HTMLInputElement>) => {
-      setTasks(
-        tasks.map((item, i) => {
-          if (index === i) {
-            return event.target.value;
-          } else {
-            return item;
-          }
-        })
-      )
+  function updateTask(newValue: string, index: number) {
+    const newTasks = tasks.map((item, i) => {
+      if (index === i) {
+        return newValue;
+      } else {
+        return item;
+      }
+    });
+    if (index === newTasks.length - 1 && newTasks[index]) {
+      newTasks.push("");
     }
+    setTasks(newTasks);
   }
 
   return (
@@ -24,7 +24,8 @@ export function TaskGroup() {
           <input
             type="text"
             value={task}
-            onChange={onChangeTask(i)}
+            onChange={e => updateTask(e.target.value, i)}
+            onBlur={() => updateTask(tasks[i].trim(), i)}
           />
           <br />
         </React.Fragment>
