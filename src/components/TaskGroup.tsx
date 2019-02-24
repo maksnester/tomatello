@@ -1,7 +1,36 @@
 import React, { useState } from 'react'
+import injectSheet, { ClassNameMap } from 'react-jss'
+import cn from 'classnames'
 
-export function TaskGroup() {
+const styles = {
+  taskGroup: {
+    padding: 15,
+
+    '& input': {
+      width: '100%',
+    },
+  },
+
+  groupTitle: {
+    '& > input': {
+      border: 'unset',
+      borderBottom: '2px solid black',
+      padding: '0 2px',
+      height: 45,
+      fontSize: 21,
+      textAlign: 'center',
+    },
+  },
+}
+
+interface TaskGroupProps {
+  classes: ClassNameMap<keyof typeof styles>
+  className?: string
+}
+
+const TaskGroupComponent: React.FC<TaskGroupProps> = props => {
   const [tasks, setTasks] = useState(['', '', '', '', ''])
+  const [groupTitle, setGroupTitle] = useState('')
 
   function updateTask(newValue: string, index: number) {
     const newTasks = tasks.map((item, i) => {
@@ -18,7 +47,13 @@ export function TaskGroup() {
   }
 
   return (
-    <div>
+    <div className={cn(props.className, props.classes.taskGroup)}>
+      <div className={props.classes.groupTitle}>
+        <input
+          value={groupTitle}
+          onChange={e => setGroupTitle(e.target.value)}
+        />
+      </div>
       {tasks.map((task, i) => (
         <React.Fragment key={i}>
           <input
@@ -33,3 +68,5 @@ export function TaskGroup() {
     </div>
   )
 }
+
+export const TaskGroup = injectSheet(styles)(TaskGroupComponent)
