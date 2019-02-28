@@ -1,13 +1,9 @@
 import React, { Component } from 'react'
-import { TaskGroup } from './TaskGroup'
+import { GroupContainer } from './GroupContainer'
 
 class App extends Component {
   render() {
-    return (
-      <div>
-        <TaskGroup />
-      </div>
-    )
+    return <GroupContainer />
   }
 }
 

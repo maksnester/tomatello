@@ -1,6 +1,7 @@
-import React, { useState } from 'react'
+import React from 'react'
 import injectSheet, { ClassNameMap } from 'react-jss'
 import cn from 'classnames'
+import { GroupOfTasks } from './FakeDataProvider'
 
 const styles = {
   taskGroup: {
@@ -23,50 +24,41 @@ const styles = {
   },
 }
 
-interface TaskGroupProps {
+interface Props {
   classes: ClassNameMap<keyof typeof styles>
   className?: string
+  group: GroupOfTasks
 }
 
-const TaskGroupComponent: React.FC<TaskGroupProps> = props => {
-  const [tasks, setTasks] = useState(['', '', '', '', ''])
-  const [groupTitle, setGroupTitle] = useState('')
-
-  function updateTask(newValue: string, index: number) {
-    const newTasks = tasks.map((item, i) => {
-      if (index === i) {
-        return newValue
-      } else {
-        return item
-      }
-    })
-    if (index === newTasks.length - 1 && newTasks[index]) {
-      newTasks.push('')
-    }
-    setTasks(newTasks)
-  }
-
+const TaskGroupComponent: React.FC<Props> = props => {
   return (
     <div className={cn(props.className, props.classes.taskGroup)}>
+      <p>TaskGroupComponent is under refactoring</p>
+    </div>
+  )
+}
+
+/*
+
+<p>TaskGroupComponent is under refactoring</p>
       <div className={props.classes.groupTitle}>
         <input
           value={groupTitle}
           onChange={e => setGroupTitle(e.target.value)}
         />
       </div>
-      {tasks.map((task, i) => (
+      {tasks.items.map((task, i) => (
         <React.Fragment key={i}>
           <input
             type="text"
             value={task}
             onChange={e => updateTask(e.target.value, i)}
-            onBlur={() => updateTask(tasks[i].trim(), i)}
+            onBlur={() => updateTask(tasks.items[i].trim(), i)}
           />
           <br />
         </React.Fragment>
       ))}
-    </div>
-  )
-}
+
+ */
 
 export const TaskGroup = injectSheet(styles)(TaskGroupComponent)
