@@ -1,7 +1,7 @@
 import React from 'react'
 import injectSheet, { ClassNameMap } from 'react-jss'
 import cn from 'classnames'
-import { GroupOfTasks } from './FakeDataProvider'
+import { GroupOfTasks, Task } from './FakeDataProvider'
 
 const styles = {
   taskGroup: {
@@ -24,41 +24,64 @@ const styles = {
   },
 }
 
-interface Props {
+type Props = {
   classes: ClassNameMap<keyof typeof styles>
   className?: string
   group: GroupOfTasks
+  onChangeGroup: (groupId: string, newValue: GroupOfTasks) => void
 }
 
 const TaskGroupComponent: React.FC<Props> = props => {
+  const { group, className, classes } = props
+
+  const onChangeGroupTitle = (newTitleValue: string) => {
+    props.onChangeGroup(group.id, {
+      ...group,
+      title: newTitleValue,
+    })
+  }
+
+  const onChangeTask = (taskId: string, newTaskValue: string) => {
+    props.onChangeGroup(group.id, {
+      ...group,
+      itemsById: {
+        ...group.itemsById,
+        [taskId]: {
+          ...group.itemsById[taskId],
+          value: newTaskValue,
+        },
+      },
+    })
+  }
+
+  const onBlurTask = (task: Task) => {
+    const trimmed = task.value.trim()
+    if (trimmed !== task.value) {
+      onChangeTask(task.id, task.value.trim())
+    }
+  }
+
   return (
-    <div className={cn(props.className, props.classes.taskGroup)}>
-      <p>TaskGroupComponent is under refactoring</p>
-    </div>
-  )
-}
-
-/*
-
-<p>TaskGroupComponent is under refactoring</p>
-      <div className={props.classes.groupTitle}>
+    <div className={cn(className, classes.taskGroup)}>
+      <div className={classes.groupTitle}>
         <input
-          value={groupTitle}
-          onChange={e => setGroupTitle(e.target.value)}
+          value={group.title}
+          onChange={e => onChangeGroupTitle(e.target.value)}
         />
       </div>
-      {tasks.items.map((task, i) => (
-        <React.Fragment key={i}>
+      {Object.values(group.itemsById).map(task => (
+        <React.Fragment key={task.id}>
           <input
             type="text"
-            value={task}
-            onChange={e => updateTask(e.target.value, i)}
-            onBlur={() => updateTask(tasks.items[i].trim(), i)}
+            value={task.value}
+            onChange={e => onChangeTask(task.id, e.target.value)}
+            onBlur={() => onBlurTask(task)}
           />
           <br />
         </React.Fragment>
       ))}
-
- */
+    </div>
+  )
+}
 
 export const TaskGroup = injectSheet(styles)(TaskGroupComponent)
