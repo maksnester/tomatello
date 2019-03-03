@@ -14,12 +14,14 @@ export type GroupsDictionary = {
 }
 
 export class FakeDataProvider {
+  private static nextId: number = 0
+
   fakeData: GroupsDictionary
 
   constructor() {
+    const newGroup = FakeDataProvider.createGroupOfTasks(5)
     this.fakeData = {
-      groupId1: FakeDataProvider.createGroupOfTasks('groupId1', 5),
-      groupId2: FakeDataProvider.createGroupOfTasks('groupId2', 3),
+      [newGroup.id]: newGroup,
     }
     this.updateGroup = this.updateGroup.bind(this)
   }
@@ -33,8 +35,8 @@ export class FakeDataProvider {
     this.fakeData[groupId].itemsById[newTask.id] = newTask
   }
 
-  addGroup(): void {
-    const newGroup = FakeDataProvider.createGroupOfTasks()
+  addGroup(countOfTasks: number): void {
+    const newGroup = FakeDataProvider.createGroupOfTasks(countOfTasks)
     this.fakeData[newGroup.id] = newGroup
   }
 
@@ -42,22 +44,20 @@ export class FakeDataProvider {
     this.fakeData[groupId] = newValue
   }
 
-  // updateTask(groupId: string, taskId: string, newValue: string): void {
-  //   this.fakeData[groupId].itemsById[taskId] = {
-  //     ...this.fakeData[groupId].itemsById[taskId],
-  //     value: newValue,
-  //   }
-  // }
+  updateTask(groupId: string, taskId: string, newValue: string): void {
+    this.fakeData[groupId].itemsById[taskId] = {
+      ...this.fakeData[groupId].itemsById[taskId],
+      value: newValue,
+    }
+  }
 
-  private static createGroupOfTasks(
-    id: string = `groupId${Math.random()}`,
-    countOfTasks: number = 5
-  ): GroupOfTasks {
+  private static createGroupOfTasks(countOfTasks: number = 3): GroupOfTasks {
+    const id = `groupId${FakeDataProvider.nextId++}`
     return {
       id,
       title: '',
       itemsById: Array.from(Array(countOfTasks)).reduce(acc => {
-        const id = `taskId${Math.random().toString()}`
+        const id = `taskId${FakeDataProvider.nextId++}`
         acc[id] = FakeDataProvider.createTaskItem(id)
         return acc
       }, {}),
@@ -65,7 +65,7 @@ export class FakeDataProvider {
   }
 
   private static createTaskItem(
-    id: string = `taskId${Math.random()}`,
+    id: string = `taskId${FakeDataProvider.nextId++}`,
     value: string = ''
   ): Task {
     return {
