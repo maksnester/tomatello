@@ -29,6 +29,7 @@ type Props = {
   className?: string
   group: GroupOfTasks
   onChangeGroup: (groupId: string, newValue: GroupOfTasks) => void
+  onChangeTask: (groupId: string, taskId: string, newValue: string) => void
 }
 
 const TaskGroupComponent: React.FC<Props> = props => {
@@ -41,23 +42,10 @@ const TaskGroupComponent: React.FC<Props> = props => {
     })
   }
 
-  const onChangeTask = (taskId: string, newTaskValue: string) => {
-    props.onChangeGroup(group.id, {
-      ...group,
-      itemsById: {
-        ...group.itemsById,
-        [taskId]: {
-          ...group.itemsById[taskId],
-          value: newTaskValue,
-        },
-      },
-    })
-  }
-
   const onBlurTask = (task: Task) => {
     const trimmed = task.value.trim()
     if (trimmed !== task.value) {
-      onChangeTask(task.id, task.value.trim())
+      props.onChangeTask(group.id, task.id, task.value.trim())
     }
   }
 
@@ -74,7 +62,9 @@ const TaskGroupComponent: React.FC<Props> = props => {
           <input
             type="text"
             value={task.value}
-            onChange={e => onChangeTask(task.id, e.target.value)}
+            onChange={e =>
+              props.onChangeTask(group.id, task.id, e.target.value)
+            }
             onBlur={() => onBlurTask(task)}
           />
           <br />

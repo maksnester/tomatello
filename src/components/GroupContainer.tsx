@@ -32,8 +32,8 @@ export class GroupContainerComponent extends Component<Props, State> {
     }
   }
 
-  onChangeGroup = (groupId: string, newValue: GroupOfTasks): void => {
-    fakeDataProvider.updateGroup(groupId, newValue)
+  onChangeTask = (groupId: string, taskId: string, newValue: string): void => {
+    fakeDataProvider.updateTask(groupId, taskId, newValue)
     if (
       newValue &&
       !Object.values(this.state.groups[groupId].itemsById).some(
@@ -43,6 +43,15 @@ export class GroupContainerComponent extends Component<Props, State> {
       fakeDataProvider.addTask(groupId)
     }
 
+    this.setState(() => {
+      return {
+        groups: fakeDataProvider.getGroups(),
+      }
+    })
+  }
+
+  onChangeGroup = (groupId: string, newValue: GroupOfTasks): void => {
+    fakeDataProvider.updateGroup(groupId, newValue)
     this.setState(() => {
       return {
         groups: fakeDataProvider.getGroups(),
@@ -64,11 +73,12 @@ export class GroupContainerComponent extends Component<Props, State> {
 
     return (
       <div>
-        {Object.values(this.state.groups).map((group, id) => (
+        {Object.values(this.state.groups).map(group => (
           <TaskGroup
-            key={id}
+            key={group.id}
             group={group}
             onChangeGroup={this.onChangeGroup}
+            onChangeTask={this.onChangeTask}
           />
         ))}
 
