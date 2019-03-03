@@ -51,11 +51,15 @@ export class GroupContainerComponent extends Component<Props, State> {
   }
 
   onAddGroupClicked = () => {
-    // add group ...
+    fakeDataProvider.addGroup(3)
+    this.setState(() => {
+      return {
+        groups: fakeDataProvider.getGroups(),
+      }
+    })
   }
 
   render() {
-    console.log(this.state)
     const { classes } = this.props
 
     return (
@@ -68,7 +72,7 @@ export class GroupContainerComponent extends Component<Props, State> {
           />
         ))}
 
-        <div className={classes.addGroup} />
+        <div className={classes.addGroup} onClick={this.onAddGroupClicked} />
       </div>
     )
   }
