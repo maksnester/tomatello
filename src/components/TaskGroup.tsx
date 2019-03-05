@@ -3,24 +3,45 @@ import injectSheet, { ClassNameMap } from 'react-jss'
 import cn from 'classnames'
 import { GroupOfTasks, Task } from './FakeDataProvider'
 
+const defaultInputStyles = {
+  '&::placeholder': {
+    color: 'lightgray',
+  },
+  outline: 'none',
+  border: 'none',
+}
+
 const styles = {
   taskGroup: {
     padding: 15,
-
-    '& input': {
-      width: '100%',
-    },
   },
 
   groupTitle: {
-    '& > input': {
-      border: 'unset',
-      borderBottom: '2px solid black',
-      padding: '0 2px',
-      height: 45,
-      fontSize: 21,
-      textAlign: 'center',
-    },
+    ...defaultInputStyles,
+    borderBottom: '1px solid #dadada',
+    display: 'flex',
+    fontSize: 21,
+    margin: '0 auto 10px',
+    textAlign: 'center',
+  },
+
+  taskContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
+
+  taskWrapper: {
+    borderBottom: '1px solid gray',
+    marginBottom: 10,
+    padding: '0 10px',
+  },
+
+  task: {
+    ...defaultInputStyles,
+    display: 'block',
+    width: '100%',
+    padding: '10px 0',
+    fontSize: 18,
   },
 }
 
@@ -49,27 +70,51 @@ const TaskGroupComponent: React.FC<Props> = props => {
     }
   }
 
+  const getPlaceholderByIndex = (index: number): string => {
+    switch (index) {
+      case 1:
+        return 'Click tomato to start work'
+      case 2:
+        return 'Accept once time has passed'
+      case 3:
+        return 'Take a rest'
+      case 4:
+        return 'Start another task'
+      case 5:
+        return 'Stay focused'
+      case 10:
+        return 'Wow, good plans!'
+      case 11:
+        return " Perhaps it's time to create a new group?"
+      default:
+        return 'Enter some task description...'
+    }
+  }
+
   return (
     <div className={cn(className, classes.taskGroup)}>
-      <div className={classes.groupTitle}>
-        <input
-          value={group.title}
-          onChange={e => onChangeGroupTitle(e.target.value)}
-        />
-      </div>
-      {Object.values(group.itemsById).map(task => (
-        <React.Fragment key={task.id}>
-          <input
-            type="text"
-            value={task.value}
-            onChange={e =>
-              props.onChangeTask(group.id, task.id, e.target.value)
-            }
-            onBlur={() => onBlurTask(task)}
-          />
-          <br />
-        </React.Fragment>
-      ))}
+      <input
+        placeholder="Group title"
+        className={classes.groupTitle}
+        value={group.title}
+        onChange={e => onChangeGroupTitle(e.target.value)}
+      />
+      <label className={classes.taskContainer}>
+        {Object.values(group.itemsById).map((task, i) => (
+          <div key={task.id} className={classes.taskWrapper}>
+            <input
+              className={classes.task}
+              value={task.value}
+              type="text"
+              placeholder={getPlaceholderByIndex(i)}
+              onChange={e =>
+                props.onChangeTask(group.id, task.id, e.target.value)
+              }
+              onBlur={() => onBlurTask(task)}
+            />
+          </div>
+        ))}
+      </label>
     </div>
   )
 }
