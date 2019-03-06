@@ -1,6 +1,8 @@
 import React from 'react'
 import injectSheet, { ClassNameMap } from 'react-jss'
 import cn from 'classnames'
+import { ReactComponent as IconMove } from '../assets/move.svg'
+
 import { GroupOfTasks, Task } from './FakeDataProvider'
 
 const defaultInputStyles = {
@@ -34,6 +36,17 @@ const styles = {
     borderBottom: '1px solid gray',
     marginBottom: 10,
     padding: '0 10px',
+    display: 'flex',
+
+    '& svg': {
+      display: 'block',
+      height: '32px',
+      width: '32px',
+      fill: '#e8e8e8',
+      '&:hover': {
+        fill: '#959595',
+      },
+    },
   },
 
   task: {
@@ -112,6 +125,7 @@ const TaskGroupComponent: React.FC<Props> = props => {
               }
               onBlur={() => onBlurTask(task)}
             />
+            <IconMove />
           </div>
         ))}
       </label>
