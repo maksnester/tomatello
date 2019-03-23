@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { DragDropContext } from 'react-beautiful-dnd'
 import { TaskGroup } from './TaskGroup'
 import injectSheet, { ClassNameMap } from 'react-jss'
 import {
@@ -68,11 +69,15 @@ export class GroupContainerComponent extends Component<Props, State> {
     })
   }
 
+  onDragEnd = () => {
+    console.log('dragend')
+  }
+
   render() {
     const { classes } = this.props
 
     return (
-      <div>
+      <DragDropContext onDragEnd={this.onDragEnd}>
         {Object.values(this.state.groups).map(group => (
           <TaskGroup
             key={group.id}
@@ -83,7 +88,7 @@ export class GroupContainerComponent extends Component<Props, State> {
         ))}
 
         <div className={classes.addGroup} onClick={this.onAddGroupClicked} />
-      </div>
+      </DragDropContext>
     )
   }
 }

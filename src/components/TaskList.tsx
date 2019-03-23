@@ -3,6 +3,7 @@ import { GroupOfTasks, Task } from './FakeDataProvider'
 import { ReactComponent as IconMove } from '../assets/move.svg'
 import React from 'react'
 import injectSheet from 'react-jss'
+import { Draggable } from 'react-beautiful-dnd'
 
 const styles = {
   taskContainer: {
@@ -27,6 +28,12 @@ const styles = {
     },
   },
 
+  taskLabel: {
+    border: '1px solid transparent',
+    width: '100%',
+    padding: '10px 0',
+  },
+
   task: {
     '&::placeholder': {
       color: 'lightgray',
@@ -35,12 +42,13 @@ const styles = {
     border: 'none',
     display: 'block',
     width: '100%',
-    padding: '10px 0',
     fontSize: 18,
   },
 }
 
 type Props = {
+  // eslint-disable-next-line
+  _ref: any // have to add custom _ref because of jss
   classes: ClassNameMap<keyof typeof styles>
   group: GroupOfTasks
   onChangeTask: (groupId: string, taskId: string, newValue: string) => void
@@ -50,6 +58,7 @@ const TaskListComponent: React.FC<Props> = ({
   classes,
   group,
   onChangeTask,
+  _ref,
 }) => {
   const getPlaceholderByIndex = (index: number): string => {
     switch (index) {
@@ -80,19 +89,32 @@ const TaskListComponent: React.FC<Props> = ({
   }
 
   return (
-    <div className={classes.taskContainer}>
+    <div className={classes.taskContainer} ref={_ref}>
       {Object.values(group.itemsById).map((task, i) => (
-        <div key={task.id} className={classes.taskWrapper}>
-          <input
-            className={classes.task}
-            value={task.value}
-            type="text"
-            placeholder={getPlaceholderByIndex(i)}
-            onChange={e => onChangeTask(group.id, task.id, e.target.value)}
-            onBlur={() => onBlurTask(task)}
-          />
-          <IconMove />
-        </div>
+        <Draggable draggableId={task.id} index={task.sortKey} key={task.id}>
+          {provided => (
+            <div
+              {...provided.draggableProps}
+              {...provided.dragHandleProps}
+              ref={provided.innerRef}
+              className={classes.taskWrapper}
+            >
+              <label className={classes.taskLabel}>
+                <input
+                  className={classes.task}
+                  value={task.value}
+                  type="text"
+                  placeholder={getPlaceholderByIndex(i)}
+                  onChange={e =>
+                    onChangeTask(group.id, task.id, e.target.value)
+                  }
+                  onBlur={() => onBlurTask(task)}
+                />
+              </label>
+              <IconMove />
+            </div>
+          )}
+        </Draggable>
       ))}
     </div>
   )

@@ -3,6 +3,7 @@ import injectSheet, { ClassNameMap } from 'react-jss'
 import cn from 'classnames'
 
 import { GroupOfTasks } from './FakeDataProvider'
+import { Droppable } from 'react-beautiful-dnd'
 import { TaskList } from './TaskList'
 
 const styles = {
@@ -50,7 +51,16 @@ const TaskGroupComponent: React.FC<Props> = props => {
         value={group.title}
         onChange={e => onChangeGroupTitle(e.target.value)}
       />
-      <TaskList group={group} onChangeTask={props.onChangeTask} />
+      <Droppable droppableId={group.id}>
+        {provided => (
+          <TaskList
+            _ref={provided.innerRef}
+            {...provided.droppableProps}
+            group={group}
+            onChangeTask={props.onChangeTask}
+          />
+        )}
+      </Droppable>
     </div>
   )
 }
