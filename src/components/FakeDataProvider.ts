@@ -1,24 +1,23 @@
-const SORT_KEY_STEP = 1000
-
 export type Task = {
   id: string
-  sortKey: number
+  index: number
   value: string
 }
 
 export type GroupOfTasks = {
   id: string
   title: string
-  sortKey: number
+  index: number
   itemsById: { [id: string]: Task }
 }
 
 export type GroupsDictionary = {
-  [id: string]: GroupOfTasks
+  [groupId: string]: GroupOfTasks
 }
 
 export class FakeDataProvider {
-  private static nextId: number = 0
+  private static nextTaskId: number = 0
+  private static nextGroupId: number = 0
 
   fakeData: GroupsDictionary = {}
 
@@ -35,13 +34,8 @@ export class FakeDataProvider {
   }
 
   addTask(groupId: string): void {
-    const lastSortKey = Math.max(
-      ...Object.values(this.fakeData[groupId].itemsById).map(
-        task => task.sortKey
-      )
-    )
     const newTask = FakeDataProvider.createTaskItem({
-      sortKey: lastSortKey + SORT_KEY_STEP,
+      index: Object.values(this.fakeData[groupId].itemsById).length,
     })
     this.fakeData[groupId].itemsById[newTask.id] = newTask
   }
@@ -63,21 +57,16 @@ export class FakeDataProvider {
   }
 
   private createGroupOfTasks(countOfTasks: number = 3): GroupOfTasks {
-    const id = `groupId${FakeDataProvider.nextId++}`
+    const id = `groupId${FakeDataProvider.nextGroupId++}`
     return {
       id,
-      sortKey:
-        Math.max(
-          ...Object.values(this.fakeData).map(group => group.sortKey),
-          0
-        ) + SORT_KEY_STEP,
+      index: Object.values(this.fakeData).length,
       title: '',
       itemsById: Array.from(Array(countOfTasks)).reduce((acc, _, index) => {
-        const id = `taskId${FakeDataProvider.nextId++}`
+        const id = `taskId${FakeDataProvider.nextTaskId++}`
         acc[id] = FakeDataProvider.createTaskItem({
           id,
-          value: '',
-          sortKey: index * SORT_KEY_STEP,
+          index,
         })
         return acc
       }, {}),
@@ -86,9 +75,9 @@ export class FakeDataProvider {
 
   private static createTaskItem(task: Partial<Task> = {}): Task {
     return {
-      id: task.id || `taskId${FakeDataProvider.nextId++}`,
+      id: task.id || `taskId${FakeDataProvider.nextTaskId++}`,
       value: task.value || '',
-      sortKey: task.sortKey || 0,
+      index: task.index || 0,
     }
   }
 }

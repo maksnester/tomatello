@@ -90,32 +90,34 @@ const TaskListComponent: React.FC<Props> = ({
 
   return (
     <div className={classes.taskContainer} ref={_ref}>
-      {Object.values(group.itemsById).map((task, i) => (
-        <Draggable draggableId={task.id} index={task.sortKey} key={task.id}>
-          {provided => (
-            <div
-              {...provided.draggableProps}
-              {...provided.dragHandleProps}
-              ref={provided.innerRef}
-              className={classes.taskWrapper}
-            >
-              <label className={classes.taskLabel}>
-                <input
-                  className={classes.task}
-                  value={task.value}
-                  type="text"
-                  placeholder={getPlaceholderByIndex(i)}
-                  onChange={e =>
-                    onChangeTask(group.id, task.id, e.target.value)
-                  }
-                  onBlur={() => onBlurTask(task)}
-                />
-              </label>
-              <IconMove />
-            </div>
-          )}
-        </Draggable>
-      ))}
+      {Object.values(group.itemsById)
+        .sort(task => task.index)
+        .map(task => (
+          <Draggable draggableId={task.id} index={task.index} key={task.id}>
+            {provided => (
+              <div
+                {...provided.draggableProps}
+                {...provided.dragHandleProps}
+                ref={provided.innerRef}
+                className={classes.taskWrapper}
+              >
+                <label className={classes.taskLabel}>
+                  <input
+                    className={classes.task}
+                    value={task.value}
+                    type="text"
+                    placeholder={getPlaceholderByIndex(task.index)}
+                    onChange={e =>
+                      onChangeTask(group.id, task.id, e.target.value)
+                    }
+                    onBlur={() => onBlurTask(task)}
+                  />
+                </label>
+                <IconMove />
+              </div>
+            )}
+          </Draggable>
+        ))}
     </div>
   )
 }

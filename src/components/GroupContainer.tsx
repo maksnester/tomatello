@@ -78,14 +78,16 @@ export class GroupContainerComponent extends Component<Props, State> {
 
     return (
       <DragDropContext onDragEnd={this.onDragEnd}>
-        {Object.values(this.state.groups).map(group => (
-          <TaskGroup
-            key={group.id}
-            group={group}
-            onChangeGroup={this.onChangeGroup}
-            onChangeTask={this.onChangeTask}
-          />
-        ))}
+        {Object.values(this.state.groups)
+          .sort(group => group.index)
+          .map(group => (
+            <TaskGroup
+              key={group.id}
+              group={group}
+              onChangeGroup={this.onChangeGroup}
+              onChangeTask={this.onChangeTask}
+            />
+          ))}
 
         <div className={classes.addGroup} onClick={this.onAddGroupClicked} />
       </DragDropContext>
