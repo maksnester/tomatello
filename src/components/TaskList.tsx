@@ -16,6 +16,7 @@ const styles = {
     marginBottom: 10,
     padding: '0 10px',
     display: 'flex',
+    backgroundColor: 'white',
 
     '& svg': {
       display: 'block',

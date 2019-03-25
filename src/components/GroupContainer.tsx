@@ -1,11 +1,12 @@
 import React, { Component } from 'react'
-import { DragDropContext } from 'react-beautiful-dnd'
+import { DragDropContext, DropResult } from 'react-beautiful-dnd'
 import { TaskGroup } from './TaskGroup'
 import injectSheet, { ClassNameMap } from 'react-jss'
 import {
   FakeDataProvider,
   GroupOfTasks,
   GroupsDictionary,
+  Task,
 } from './FakeDataProvider'
 
 const fakeDataProvider = new FakeDataProvider()
@@ -69,8 +70,46 @@ export class GroupContainerComponent extends Component<Props, State> {
     })
   }
 
-  onDragEnd = () => {
-    console.log('dragend')
+  onDragEnd = (result: DropResult) => {
+    const { destination, source, draggableId } = result
+    console.log(result)
+    if (!destination) {
+      return
+    }
+    if (
+      destination.droppableId === source.droppableId &&
+      destination.index === source.index
+    ) {
+      return
+    }
+
+    const group = this.state.groups[destination.droppableId]
+    if (!group) {
+      console.warn('Can not find group with id', draggableId)
+      return
+    }
+
+    const tasks: Task[] = Object.values(group.itemsById).sort(t => t.index)
+    const movedTask = tasks[source.index]
+    tasks.splice(source.index, 1)
+    tasks.splice(destination.index, 0, movedTask)
+    const tasksById = tasks.reduce(
+      (acc, task, index) => {
+        acc[task.id] = {
+          ...task,
+          index,
+        }
+        return acc
+      },
+      {} as { [id: string]: Task }
+    )
+
+    this.onChangeGroup(group.id, {
+      ...group,
+      itemsById: tasksById,
+    })
+
+    // TODO implement placing into other group
   }
 
   render() {
