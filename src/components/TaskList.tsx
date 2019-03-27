@@ -4,11 +4,13 @@ import { ReactComponent as IconMove } from '../assets/move.svg'
 import React from 'react'
 import injectSheet from 'react-jss'
 import { Draggable } from 'react-beautiful-dnd'
+import cn from 'classnames'
 
-const styles = {
+export const styles = {
   taskContainer: {
     display: 'flex',
     flexDirection: 'column',
+    minHeight: 30,
   },
 
   taskWrapper: {
@@ -27,6 +29,9 @@ const styles = {
         fill: '#959595',
       },
     },
+  },
+  taskIsDragging: {
+    boxShadow: '6px 4px 5px 0px rgb(146, 146, 146)',
   },
 
   taskLabel: {
@@ -96,12 +101,14 @@ const TaskListComponent: React.FC<Props> = ({
         .sort(task => task.index)
         .map(task => (
           <Draggable draggableId={task.id} index={task.index} key={task.id}>
-            {provided => (
+            {(provided, snapshot) => (
               <div
                 {...provided.draggableProps}
                 {...provided.dragHandleProps}
                 ref={provided.innerRef}
-                className={classes.taskWrapper}
+                className={cn(classes.taskWrapper, {
+                  [classes.taskIsDragging]: snapshot.isDragging,
+                })}
               >
                 <label className={classes.taskLabel}>
                   <input

@@ -9,6 +9,15 @@ import { TaskList } from './TaskList'
 const styles = {
   taskGroup: {
     padding: 15,
+    transition: 'background-color 0.2s ease',
+  },
+
+  taskGroupDraggingOver: {
+    backgroundColor: '#f5f5f5',
+  },
+
+  listWrapper: {
+    minHeight: 100,
   },
 
   groupTitle: {
@@ -22,6 +31,7 @@ const styles = {
     fontSize: 21,
     margin: '0 auto 10px',
     textAlign: 'center',
+    backgroundColor: 'transparent',
   },
 }
 
@@ -42,26 +52,29 @@ const TaskGroupComponent: React.FC<Props> = props => {
       title: newTitleValue,
     })
   }
-
   return (
-    <div className={cn(className, classes.taskGroup)}>
-      <input
-        placeholder="Group title"
-        className={classes.groupTitle}
-        value={group.title}
-        onChange={e => onChangeGroupTitle(e.target.value)}
-      />
-      <Droppable droppableId={group.id}>
-        {provided => (
+    <Droppable droppableId={group.id}>
+      {(provided, snapshot) => (
+        <div
+          className={cn(className, classes.taskGroup, {
+            [classes.taskGroupDraggingOver]: snapshot.isDraggingOver,
+          })}
+        >
+          <input
+            placeholder="Group title"
+            className={classes.groupTitle}
+            value={group.title}
+            onChange={e => onChangeGroupTitle(e.target.value)}
+          />
           <TaskList
             _ref={provided.innerRef}
             {...provided.droppableProps}
             group={group}
             onChangeTask={props.onChangeTask}
           />
-        )}
-      </Droppable>
-    </div>
+        </div>
+      )}
+    </Droppable>
   )
 }
 
