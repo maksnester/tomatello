@@ -61,6 +61,7 @@ const TaskListComponent: React.FC<Props> = ({
   onChangeTask,
   _ref,
 }) => {
+  // fixme: works poorly with moving of empty tasks
   const getPlaceholderByIndex = (index: number): string => {
     switch (index) {
       case 1:
@@ -76,7 +77,7 @@ const TaskListComponent: React.FC<Props> = ({
       case 10:
         return 'Wow, good plans!'
       case 11:
-        return " Perhaps it's time to create a new group?"
+        return "Perhaps it's time to create a new group?"
       default:
         return 'Enter some task description...'
     }

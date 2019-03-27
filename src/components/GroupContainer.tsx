@@ -71,8 +71,7 @@ export class GroupContainerComponent extends Component<Props, State> {
   }
 
   onDragEnd = (result: DropResult) => {
-    const { destination, source, draggableId } = result
-    console.log(result)
+    const { destination, source } = result
     if (!destination) {
       return
     }
@@ -83,33 +82,53 @@ export class GroupContainerComponent extends Component<Props, State> {
       return
     }
 
-    const group = this.state.groups[destination.droppableId]
-    if (!group) {
-      console.warn('Can not find group with id', draggableId)
+    const sourceGroup = this.state.groups[source.droppableId]
+    const destinationGroup = this.state.groups[destination.droppableId]
+    if (!sourceGroup) {
+      console.warn('Can not find group with id', source.droppableId)
+      return
+    }
+    if (!destinationGroup) {
+      console.warn('Can not find group with id', destination.droppableId)
       return
     }
 
-    const tasks: Task[] = Object.values(group.itemsById).sort(t => t.index)
-    const movedTask = tasks[source.index]
-    tasks.splice(source.index, 1)
-    tasks.splice(destination.index, 0, movedTask)
-    const tasksById = tasks.reduce(
-      (acc, task, index) => {
-        acc[task.id] = {
-          ...task,
-          index,
-        }
-        return acc
-      },
-      {} as { [id: string]: Task }
+    const sourceTasks: Task[] = Object.values(sourceGroup.itemsById).sort(
+      t => t.index
     )
+    const destinationTasks: Task[] =
+      sourceGroup === destinationGroup
+        ? sourceTasks
+        : Object.values(destinationGroup.itemsById).sort(t => t.index)
 
-    this.onChangeGroup(group.id, {
-      ...group,
-      itemsById: tasksById,
+    const movedTask = sourceTasks[source.index]
+
+    sourceTasks.splice(source.index, 1)
+    destinationTasks.splice(destination.index, 0, movedTask)
+
+    const convertArrayToCollection = (
+      acc: { [id: string]: Task },
+      task: Task,
+      index: number
+    ) => {
+      acc[task.id] = {
+        ...task,
+        index,
+      }
+      return acc
+    }
+
+    this.onChangeGroup(destinationGroup.id, {
+      ...destinationGroup,
+      itemsById: destinationTasks.reduce(convertArrayToCollection, {}),
     })
 
-    // TODO implement placing into other group
+    if (sourceGroup !== destinationGroup) {
+      this.onChangeGroup(sourceGroup.id, {
+        ...sourceGroup,
+        itemsById: sourceTasks.reduce(convertArrayToCollection, {}),
+      })
+    }
   }
 
   render() {
