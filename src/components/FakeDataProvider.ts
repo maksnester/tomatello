@@ -56,6 +56,10 @@ export class FakeDataProvider {
     }
   }
 
+  removeGroup(groupId: string) {
+    delete this.fakeData[groupId]
+  }
+
   private createGroupOfTasks(countOfTasks: number = 3): GroupOfTasks {
     const id = `groupId${FakeDataProvider.nextGroupId++}`
     return {

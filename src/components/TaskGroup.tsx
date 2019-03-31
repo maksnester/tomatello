@@ -37,10 +37,12 @@ const styles = {
 
 type Props = {
   classes: ClassNameMap<keyof typeof styles>
-  className?: string
   group: GroupOfTasks
+  className?: string
+  isDeletable?: boolean
   onChangeGroup: (groupId: string, newValue: GroupOfTasks) => void
   onChangeTask: (groupId: string, taskId: string, newValue: string) => void
+  onDeleteGroup: (groupId: string) => void
 }
 
 const TaskGroupComponent: React.FC<Props> = props => {
@@ -53,28 +55,36 @@ const TaskGroupComponent: React.FC<Props> = props => {
     })
   }
   return (
-    <Droppable droppableId={group.id}>
-      {(provided, snapshot) => (
-        <div
-          className={cn(className, classes.taskGroup, {
-            [classes.taskGroupDraggingOver]: snapshot.isDraggingOver,
-          })}
-        >
-          <input
-            placeholder="Group title"
-            className={classes.groupTitle}
-            value={group.title}
-            onChange={e => onChangeGroupTitle(e.target.value)}
-          />
-          <TaskList
-            _ref={provided.innerRef}
-            {...provided.droppableProps}
-            group={group}
-            onChangeTask={props.onChangeTask}
-          />
-        </div>
+    <div>
+      <Droppable droppableId={group.id}>
+        {(provided, snapshot) => (
+          <div
+            className={cn(className, classes.taskGroup, {
+              [classes.taskGroupDraggingOver]: snapshot.isDraggingOver,
+            })}
+          >
+            <input
+              placeholder="Group title"
+              className={classes.groupTitle}
+              value={group.title}
+              onChange={e => onChangeGroupTitle(e.target.value)}
+            />
+            <TaskList
+              _ref={provided.innerRef}
+              {...provided.droppableProps}
+              group={group}
+              onChangeTask={props.onChangeTask}
+            />
+          </div>
+        )}
+      </Droppable>
+
+      {props.isDeletable && (
+        <button onClick={() => props.onDeleteGroup(props.group.id)}>
+          Delete group
+        </button>
       )}
-    </Droppable>
+    </div>
   )
 }
 

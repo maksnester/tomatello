@@ -70,6 +70,15 @@ export class GroupContainerComponent extends Component<Props, State> {
     })
   }
 
+  onDeleteGroup = (groupId: string) => {
+    fakeDataProvider.removeGroup(groupId)
+    this.setState(() => {
+      return {
+        groups: fakeDataProvider.getGroups(),
+      }
+    })
+  }
+
   onDragEnd = (result: DropResult) => {
     const { destination, source } = result
     if (!destination) {
@@ -133,19 +142,21 @@ export class GroupContainerComponent extends Component<Props, State> {
 
   render() {
     const { classes } = this.props
-
+    const groupsArr = Object.values(this.state.groups).sort(
+      group => group.index
+    )
     return (
       <DragDropContext onDragEnd={this.onDragEnd}>
-        {Object.values(this.state.groups)
-          .sort(group => group.index)
-          .map(group => (
-            <TaskGroup
-              key={group.id}
-              group={group}
-              onChangeGroup={this.onChangeGroup}
-              onChangeTask={this.onChangeTask}
-            />
-          ))}
+        {groupsArr.map(group => (
+          <TaskGroup
+            key={group.id}
+            group={group}
+            onChangeGroup={this.onChangeGroup}
+            onChangeTask={this.onChangeTask}
+            onDeleteGroup={this.onDeleteGroup}
+            isDeletable={groupsArr.length > 1}
+          />
+        ))}
 
         <div className={classes.addGroup} onClick={this.onAddGroupClicked} />
       </DragDropContext>
