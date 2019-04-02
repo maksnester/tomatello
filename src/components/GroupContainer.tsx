@@ -8,6 +8,7 @@ import {
   GroupsDictionary,
   Task,
 } from './FakeDataProvider'
+import { DateContainer } from './DateContainer'
 
 const fakeDataProvider = new FakeDataProvider()
 
@@ -24,6 +25,7 @@ type Props = {
 
 type State = {
   groups: GroupsDictionary
+  selectedDate: Date // fixme: that thing might be temporary here
 }
 
 export class GroupContainerComponent extends Component<Props, State> {
@@ -31,6 +33,7 @@ export class GroupContainerComponent extends Component<Props, State> {
     super(props)
     this.state = {
       groups: fakeDataProvider.getGroups(),
+      selectedDate: new Date(),
     }
   }
 
@@ -140,26 +143,36 @@ export class GroupContainerComponent extends Component<Props, State> {
     }
   }
 
+  onDateChanged = (newDate: Date) => {
+    this.setState(() => ({ selectedDate: newDate }))
+  }
+
   render() {
     const { classes } = this.props
     const groupsArr = Object.values(this.state.groups).sort(
       group => group.index
     )
     return (
-      <DragDropContext onDragEnd={this.onDragEnd}>
-        {groupsArr.map(group => (
-          <TaskGroup
-            key={group.id}
-            group={group}
-            onChangeGroup={this.onChangeGroup}
-            onChangeTask={this.onChangeTask}
-            onDeleteGroup={this.onDeleteGroup}
-            isDeletable={groupsArr.length > 1}
-          />
-        ))}
+      <div>
+        <DateContainer
+          value={this.state.selectedDate}
+          handleChange={this.onDateChanged}
+        />
+        <DragDropContext onDragEnd={this.onDragEnd}>
+          {groupsArr.map(group => (
+            <TaskGroup
+              key={group.id}
+              group={group}
+              onChangeGroup={this.onChangeGroup}
+              onChangeTask={this.onChangeTask}
+              onDeleteGroup={this.onDeleteGroup}
+              isDeletable={groupsArr.length > 1}
+            />
+          ))}
 
-        <div className={classes.addGroup} onClick={this.onAddGroupClicked} />
-      </DragDropContext>
+          <div className={classes.addGroup} onClick={this.onAddGroupClicked} />
+        </DragDropContext>
+      </div>
     )
   }
 }
