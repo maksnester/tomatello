@@ -4,10 +4,18 @@ export type Task = {
   value: string
 }
 
+/**
+ * @property id
+ * @property title
+ * @property index
+ * @property createdAt - e.g. "Wed Apr 03 2019 15:37:55 GMT+0200"
+ * @property itemsById
+ */
 export type GroupOfTasks = {
   id: string
   title: string
   index: number
+  createdAt: string
   itemsById: { [id: string]: Task }
 }
 
@@ -66,6 +74,7 @@ export class FakeDataProvider {
       id,
       index: Object.values(this.fakeData).length,
       title: '',
+      createdAt: new Date().toString(),
       itemsById: Array.from(Array(countOfTasks)).reduce((acc, _, index) => {
         const id = `taskId${FakeDataProvider.nextTaskId++}`
         acc[id] = FakeDataProvider.createTaskItem({
