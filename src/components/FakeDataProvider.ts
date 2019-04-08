@@ -1,3 +1,5 @@
+import { addDays } from 'date-fns'
+
 export type Task = {
   id: string
   index: number
@@ -30,10 +32,20 @@ export class FakeDataProvider {
   fakeData: GroupsDictionary = {}
 
   constructor() {
-    const newGroup = this.createGroupOfTasks(5)
-    this.fakeData = {
-      [newGroup.id]: newGroup,
-    }
+    // add different amount of tasks for several different days
+    this.fakeData = [
+      this.createGroupOfTasks(4, {
+        createdAt: addDays(new Date(), -1).toString(),
+      }),
+      this.createGroupOfTasks(5, { createdAt: new Date().toString() }),
+      this.createGroupOfTasks(6, {
+        createdAt: addDays(new Date(), 1).toString(),
+      }),
+    ].reduce((acc: GroupsDictionary, group: GroupOfTasks) => {
+      acc[group.id] = group
+      return acc
+    }, {})
+
     this.updateGroup = this.updateGroup.bind(this)
   }
 
@@ -68,21 +80,26 @@ export class FakeDataProvider {
     delete this.fakeData[groupId]
   }
 
-  private createGroupOfTasks(countOfTasks: number = 3): GroupOfTasks {
+  private createGroupOfTasks(
+    countOfTasks: number = 3,
+    groupDefaults: Partial<GroupOfTasks> = {}
+  ): GroupOfTasks {
     const id = `groupId${FakeDataProvider.nextGroupId++}`
     return {
       id,
       index: Object.values(this.fakeData).length,
-      title: '',
-      createdAt: new Date().toString(),
-      itemsById: Array.from(Array(countOfTasks)).reduce((acc, _, index) => {
-        const id = `taskId${FakeDataProvider.nextTaskId++}`
-        acc[id] = FakeDataProvider.createTaskItem({
-          id,
-          index,
-        })
-        return acc
-      }, {}),
+      title: groupDefaults.title || '',
+      createdAt: groupDefaults.createdAt || new Date().toString(),
+      itemsById:
+        groupDefaults.itemsById ||
+        Array.from(Array(countOfTasks)).reduce((acc, _, index) => {
+          const id = `taskId${FakeDataProvider.nextTaskId++}`
+          acc[id] = FakeDataProvider.createTaskItem({
+            id,
+            index,
+          })
+          return acc
+        }, {}),
     }
   }
 
