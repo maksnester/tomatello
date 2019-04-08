@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { endOfDay } from 'date-fns'
 import { DragDropContext, DropResult } from 'react-beautiful-dnd'
 import { TaskGroup } from './TaskGroup'
 import injectSheet, { ClassNameMap } from 'react-jss'
@@ -16,6 +17,9 @@ const styles = {
   addGroup: {
     height: 100,
     backgroundColor: 'rgba(168, 255, 235, 0.43)',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 }
 
@@ -25,7 +29,7 @@ type Props = {
 
 type State = {
   groups: GroupsDictionary
-  selectedDate: Date // fixme: that thing might be temporary here
+  selectedDate: Date
 }
 
 export class GroupContainerComponent extends Component<Props, State> {
@@ -149,29 +153,47 @@ export class GroupContainerComponent extends Component<Props, State> {
 
   render() {
     const { classes } = this.props
-    const groupsArr = Object.values(this.state.groups).sort(
-      group => group.index
-    )
+
+    const inSelectedDate = (group: GroupOfTasks) => {
+      const dayBeforeSelected = endOfDay(
+        new Date(Number(this.state.selectedDate) - 1000 * 60 * 60 * 24)
+      )
+      const d = new Date(group.createdAt)
+      return d > dayBeforeSelected && d < endOfDay(this.state.selectedDate)
+    }
+
+    const groupsArr = Object.values(this.state.groups)
+      .filter(inSelectedDate)
+      .sort(group => group.index)
+
     return (
       <div>
         <DateContainer
           value={this.state.selectedDate}
           handleChange={this.onDateChanged}
         />
-        <DragDropContext onDragEnd={this.onDragEnd}>
-          {groupsArr.map(group => (
-            <TaskGroup
-              key={group.id}
-              group={group}
-              onChangeGroup={this.onChangeGroup}
-              onChangeTask={this.onChangeTask}
-              onDeleteGroup={this.onDeleteGroup}
-              isDeletable={groupsArr.length > 1}
-            />
-          ))}
-
-          <div className={classes.addGroup} onClick={this.onAddGroupClicked} />
-        </DragDropContext>
+        {groupsArr.length ? (
+          <DragDropContext onDragEnd={this.onDragEnd}>
+            {groupsArr.map(group => (
+              <TaskGroup
+                key={group.id}
+                group={group}
+                onChangeGroup={this.onChangeGroup}
+                onChangeTask={this.onChangeTask}
+                onDeleteGroup={this.onDeleteGroup}
+                isDeletable={groupsArr.length > 1}
+              />
+            ))}
+          </DragDropContext>
+        ) : (
+          // TODO: create group automatically when possible
+          <p>
+            No tasks here :) Click button below to add a new group of tasks.
+          </p>
+        )}
+        <div className={classes.addGroup} onClick={this.onAddGroupClicked}>
+          <p>Add group</p>
+        </div>
       </div>
     )
   }
