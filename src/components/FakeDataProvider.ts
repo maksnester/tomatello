@@ -60,8 +60,8 @@ export class FakeDataProvider {
     this.fakeData[groupId].itemsById[newTask.id] = newTask
   }
 
-  addGroup(countOfTasks: number): void {
-    const newGroup = this.createGroupOfTasks(countOfTasks)
+  addGroup(countOfTasks: number, group?: Partial<GroupOfTasks>): void {
+    const newGroup = this.createGroupOfTasks(countOfTasks, group)
     this.fakeData[newGroup.id] = newGroup
   }
 

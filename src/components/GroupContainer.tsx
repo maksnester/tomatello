@@ -69,7 +69,9 @@ export class GroupContainerComponent extends Component<Props, State> {
   }
 
   onAddGroupClicked = () => {
-    fakeDataProvider.addGroup(3)
+    fakeDataProvider.addGroup(3, {
+      createdAt: this.state.selectedDate.toString(),
+    })
     this.setState(() => {
       return {
         groups: fakeDataProvider.getGroups(),
