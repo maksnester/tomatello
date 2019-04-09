@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { endOfDay } from 'date-fns'
+import { endOfDay, startOfToday } from 'date-fns'
 import { DragDropContext, DropResult } from 'react-beautiful-dnd'
 import { TaskGroup } from './TaskGroup'
 import injectSheet, { ClassNameMap } from 'react-jss'
@@ -166,6 +166,8 @@ export class GroupContainerComponent extends Component<Props, State> {
       .filter(inSelectedDate)
       .sort(group => group.index)
 
+    const isAddGroupAvailable = this.state.selectedDate > startOfToday()
+
     return (
       <div>
         <DateContainer
@@ -188,12 +190,17 @@ export class GroupContainerComponent extends Component<Props, State> {
         ) : (
           // TODO: create group automatically when possible
           <p>
-            No tasks here :) Click button below to add a new group of tasks.
+            No tasks here :)
+            {isAddGroupAvailable &&
+              'Click button below to add a new group of tasks.'}
           </p>
         )}
-        <div className={classes.addGroup} onClick={this.onAddGroupClicked}>
-          <p>Add group</p>
-        </div>
+
+        {isAddGroupAvailable && (
+          <div className={classes.addGroup} onClick={this.onAddGroupClicked}>
+            <p>Add group</p>
+          </div>
+        )}
       </div>
     )
   }
