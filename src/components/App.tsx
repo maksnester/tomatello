@@ -1,9 +1,15 @@
 import React, { Component } from 'react'
 import { GroupContainer } from './GroupContainer'
+import { Timer } from './Timer'
 
 class App extends Component {
   render() {
-    return <GroupContainer />
+    return (
+      <div>
+        <Timer />
+        <GroupContainer />
+      </div>
+    )
   }
 }
 
