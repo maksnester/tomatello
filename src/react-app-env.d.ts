@@ -6,6 +6,15 @@ declare namespace NodeJS {
   interface ProcessEnv {
     NODE_ENV: 'development' | 'production' | 'test'
     PUBLIC_URL: string
+    CONFIG: {
+      apiKey: string
+      authDomain: string
+      databaseURL: string
+      projectId: string
+      storageBucket: string
+      messagingSenderId: string
+      appId: string
+    }
   }
 }
 
